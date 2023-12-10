@@ -1,3 +1,4 @@
+import 'package:app_finance/data/listdata.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -59,10 +60,32 @@ class _HomeState extends State<Home> {
               return ListTile(
                 leading: ClipRRect(
                   borderRadius: BorderRadius.circular(5),
-                  child: Image.asset('images/Transfer.png'),
+                  child: Image.asset(
+                    'images/${geter()[index].image!}',
+                    
+                    height: 40,
+                  ),
+                ),
+                title: Text(
+                  geter()[index].name!,
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                ),
+                subtitle: Text(
+                  geter()[index].time!,
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                trailing: Text(
+                  geter()[index].fee!,
+                  style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w600,
+                      color: geter()[index].buy! ? Colors.red : Colors.green),
                 ),
               );
-            }),
+            },
+            childCount: geter().length,
+            
+            ),
           )
         ],
       ),

@@ -1,6 +1,7 @@
+import 'package:app_finance/screens/home.dart';
+import 'package:app_finance/screens/statistics.dart';
 import 'package:flutter/material.dart';
 
-import 'home.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
 
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: Statistics(),
     );
   }
 }
