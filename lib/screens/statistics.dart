@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
+import '../data/top.dart';
+
 class Statistics extends StatefulWidget {
   Statistics({super.key});
 
@@ -22,17 +24,17 @@ class _StatisticsState extends State<Statistics> {
           slivers: [
             SliverToBoxAdapter(
               child: Column(children: [
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                Text(
+                const Text(
                   'Statistics',
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w700),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Padding(
@@ -53,7 +55,7 @@ class _StatisticsState extends State<Statistics> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: index_color == index
-                                  ? Color.fromARGB(255, 47, 125, 121)
+                                  ? const Color.fromARGB(255, 47, 125, 121)
                                   : Colors.white,
                             ),
                             alignment: Alignment.center,
@@ -72,7 +74,7 @@ class _StatisticsState extends State<Statistics> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Padding(
@@ -86,14 +88,14 @@ class _StatisticsState extends State<Statistics> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text(
+                            const Text(
                               'Expense',
                               style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Icon(
+                            const Icon(
                               Icons.arrow_downward_sharp,
                               color: Colors.grey,
                             )
@@ -106,11 +108,11 @@ class _StatisticsState extends State<Statistics> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                Chart(),
-                SizedBox(
+                const Chart(),
+                const SizedBox(
                   height: 20,
                 ),
                 Padding(
@@ -118,20 +120,47 @@ class _StatisticsState extends State<Statistics> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Top Spending',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
                             fontWeight: FontWeight.bold),
                       ),
-                      Icon(Icons.swap_vert, size: 25, color: Colors.grey,)
+                      const Icon(
+                        Icons.swap_vert,
+                        size: 25,
+                        color: Colors.grey,
+                      )
                     ],
                   ),
                 )
               ]),
-            ), 
-           // SliverList(delegate: SliverChildBuilderDelegate((context, index) ))
+            ),
+            SliverList(
+                delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return ListTile(
+                  leading: Image.asset(
+                    'images/${geter_top()[index].image!}',
+                    height: 40,
+                  ),
+                  title: Text(
+                    geter_top()[index].name!,
+                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(
+                    geter_top()[index].time!,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  trailing: Text(geter_top()[index].fee!, 
+                style: TextStyle(fontSize: 17, 
+                color: Colors.red,
+                fontWeight: FontWeight.bold),),
+                );
+              },
+              childCount: geter_top().length,
+            ))
           ],
         ),
       ),
