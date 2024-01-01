@@ -3,12 +3,12 @@ import 'package:app_finance/data/1.dart';
 List<money> geter() {
   money upwork = money();
   upwork.name = 'upwork';
-  upwork.fee = '650';
+  upwork.fee = '6500';
   upwork.time = 'today';
   upwork.image = 'Transfer.png';
   upwork.buy = false;
   money startbucks = money();
-  startbucks.buy = true;
+  startbucks.buy = true;              
   startbucks.fee = '15';
   startbucks.image = 'Transfer.png';
   startbucks.name = 'starbucks';

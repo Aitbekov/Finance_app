@@ -1,5 +1,10 @@
 import 'package:app_finance/data/listdata.dart';
+import 'package:app_finance/data/model/add_date.dart';
+import 'package:app_finance/data/utility.dart';
+import 'package:app_finance/screens/statistics.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -10,86 +15,106 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   var history;
-
+  final box = Hive.box<Add_data>('data');
   final List<String> day = [
     'Monday',
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    'friday',
-    'saturday',
-    'sunday'
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
   ];
+
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: SizedBox(height: 340, child: _head()),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Transactions History',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 19,
-                      color: Colors.black,
+      child: ValueListenableBuilder(
+        valueListenable: box.listenable(),
+        builder: (context, value, child) {
+          return CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: SizedBox(height: 340, child: _head()),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Transactions History',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 19,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  Text(
-                    'See all',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                      color: Colors.grey,
+                    Text(
+                      'See all',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              return ListTile(
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: Image.asset(
-                    'images/${geter()[index].image!}',
-                    
-                    height: 40,
-                  ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                history = box.values.toList()[index];
+                return getList(history, index);
+              },
+              childCount: box.length,
+              
+              ),
+            )
+          ],
+        );
+      },
+    )));
+  }
+
+  Widget getList(Add_data history, int index){
+return Dismissible(key: UniqueKey(), 
+ onDismissed: (direction) {
+  history.delete();
+ },
+child: get(index, history));
+
+  }
+
+  ListTile get(int index, Add_data history) {
+    return ListTile(
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Image.asset(
+                  'images/${geter()[index].image!}',
+                  
+                  height: 40,
                 ),
-                title: Text(
-                  geter()[index].name!,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                ),
-                subtitle: Text(
-                  geter()[index].time!,
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                trailing: Text(
-                  geter()[index].fee!,
-                  style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w600,
-                      color: geter()[index].buy! ? Colors.red : Colors.green),
-                ),
-              );
-            },
-            childCount: geter().length,
-            
-            ),
-          )
-        ],
-      ),
-    ));
+              ),
+              title: Text(
+                history.name,
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(
+                '${day[history.datetime.weekday - 1]} ${history.datetime.year} - ${history.datetime.day} - ${history.datetime.month}',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              trailing: Text(
+                history.amount,
+                style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.w600,
+                    color: history.IN == 'Income' ? Colors.green : Colors.red),
+              ),
+            );
   }
 
   Widget _head() {
@@ -209,7 +234,7 @@ class _HomeState extends State<Home> {
                   child: Row(
                     children: [
                       Text(
-                        '\$ 2.287',
+                        '\$ ${total()}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
@@ -238,7 +263,7 @@ class _HomeState extends State<Home> {
                           ),
                           SizedBox(width: 7),
                           Text(
-                            'Income',
+                            '\$ ${income()}',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 16,
@@ -260,7 +285,7 @@ class _HomeState extends State<Home> {
                           ),
                           SizedBox(width: 7),
                           Text(
-                            'Expenses',
+                            '\$ ${expenses()}',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 16,
